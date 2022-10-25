@@ -1,0 +1,20 @@
+create or replace table brokers
+(
+broker_id integer,
+broker_code varchar2(100),
+broker_full_name varchar2(100),
+distribution_network varchar2(100),
+commission_scheme varchar2(100)
+);
+
+-------list stage confirm if its empty
+list @INSURANCE_BROKER;
+
+---------COPY INTO STORAGE SERVICE
+
+COPY INTO BROKERS FROM @INSURANCE_BROKER
+FILE_FORMAT =(TYPE = CSV FIELD_DELIMITER = ',' SKIP_HEADER=1  error_on_column_count_mismatch=false)
+PURGE = TRUE;
+SELECT * FROM BROKERS
+-----------BINGO YOU DONE-----------------
+SELECT * FROM BROKERS
