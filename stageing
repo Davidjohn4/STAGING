@@ -1,0 +1,242 @@
+use "INSURANCEDATA"
+create or replace table brokers
+(
+broker_id integer,
+broker_code varchar2(100),
+broker_full_name varchar2(100),
+distribution_network varchar2(100),
+commission_scheme varchar2(100)
+);
+
+-------list stage confirm if its empty
+list @INSURANCE_BROKER;
+
+COPY INTO BROKERS FROM @INSURANCE_BROKER
+FILE_FORMAT =(TYPE = CSV FIELD_DELIMITER = ',' SKIP_HEADER=1  error_on_column_count_mismatch=false)
+PURGE = TRUE;
+SELECT * FROM BROKERS
+
+--------------------------product----------------------------
+create or replace table product
+(
+product_id integer,
+product_category varchar(100),
+product_subcategory varchar(100),
+ product varchar2(100)
+)
+select * from product
+
+
+--------------------------customers----------------------------
+create or replace table customers
+(
+customer_id integer,
+  last_name varchar(100),
+  first_name varchar(100),
+  birthdate STRING,
+  GENDER VARCHAR(50),
+  PARTICIPANTTYPE VARCHAR(100),
+  REGIONID VARCHAR(50),
+  MARITAL_STATUS VARCHAR(100)
+)
+-------list stage confirm if its empty
+
+CREATE STAGE "INSURANCEDATA"."PUBLIC".CUSTOMERS_2 URL = 's3://insurancedat/Complain Administration_Customers.csv' 
+CREDENTIALS = (AWS_KEY_ID = 'AKIAQBTSVUOQTBW7HDXH' AWS_SECRET_KEY = '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');
+
+list @CUSTOMERS_2;
+
+COPY INTO CUSTOMERS FROM @CUSTOMERS_2
+FILE_FORMAT =(TYPE = CSV FIELD_DELIMITER = ',' SKIP_HEADER=1  error_on_column_count_mismatch=false)
+PURGE = TRUE;
+
+select * from  CUSTOMERS
+truncate CUSTOMERS 
+-------------------Region-------------------------------------
+Create or replace table regions
+(
+  ID INTEGER,
+  NAME VARCHAR(100),
+  COUNTRY VARCHAR(100),
+  STATE_CODE VARCHAR(25),
+  STATE VARCHAR(100),
+  TYPE VARCHAR(50),
+  LATITUDE DECIMAL(8,6),
+  LONGITUDES DECIMAL(9,6),
+  AREA_CODE VARCHAR(10),
+  POPULATION VARCHAR(50),
+  HOUSEHOLDS VARCHAR(50),
+  MEDIAN_INCOME VARCHAR(100),
+  LAND_AREA VARCHAR(100),
+  WATER_AREA VARCHAR(100),
+  TIME_ZONE VARCHAR(150)
+)
+
+SELECT * FROM REGIONS;
+
+-------------------STATE-------------------------------------
+
+CREATE OR REPLACE TABLE STATE_REGION
+(
+STATE_CODE VARCHAR(50),
+  STATE VARCHAR(100),
+  REGION VARCHAR(50)
+)
+list @STATE_REGION;
+CREATE STAGE "INSURANCEDATA"."PUBLIC".STATE_REGION URL = 's3://insurancedat/Complain Administration_State Regions.csv' 
+CREDENTIALS = (AWS_KEY_ID = 'AKIAQBTSVUOQTBW7HDXH' AWS_SECRET_KEY = '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');
+
+COPY INTO STATE_REGION FROM @STATE_REGION
+FILE_FORMAT =(TYPE = CSV FIELD_DELIMITER = ',' SKIP_HEADER=1  error_on_column_count_mismatch=false)
+PURGE = TRUE;
+
+select * from  STATE_REGION
+-------------------PRIORITIES-------------------------------------
+CREATE OR REPLACE TABLE PRIORITIES
+(
+ID INTEGER,
+  DESCRIPTION VARCHAR(100));
+  
+  CREATE STAGE "INSURANCEDATA"."PUBLIC".PRIORITIES URL = 's3://insurancedat/Complain Administration_Priorities.csv' 
+CREDENTIALS = (AWS_KEY_ID = 'AKIAQBTSVUOQTBW7HDXH' AWS_SECRET_KEY = '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');
+
+list @PRIORITIES;
+
+COPY INTO PRIORITIES FROM @PRIORITIES
+FILE_FORMAT =(TYPE = CSV FIELD_DELIMITER = ',' SKIP_HEADER=1  error_on_column_count_mismatch=false)
+PURGE = TRUE;
+
+select * from  PRIORITIES
+-------------------STATUSES-------------------------------------
+CREATE OR REPLACE TABLE STATUSES
+(
+ID INTEGER,
+  DESCRIPTION VARCHAR(100));
+  
+    CREATE STAGE "INSURANCEDATA"."PUBLIC".STATUSES URL = 's3://insurancedat/Complain Administration_Statuses.csv' 
+CREDENTIALS = (AWS_KEY_ID = 'AKIAQBTSVUOQTBW7HDXH' AWS_SECRET_KEY = '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');
+
+list @STATUSES;
+
+COPY INTO STATUSES FROM @STATUSES
+FILE_FORMAT =(TYPE = CSV FIELD_DELIMITER = ',' SKIP_HEADER=1  error_on_column_count_mismatch=false)
+PURGE = TRUE;
+
+select * from  STATUSES
+-------------------CATEGORIES-------------------------------------
+CREATE OR REPLACE TABLE CATEGORIES
+(
+ID INTEGER,
+  DESCRIPTION VARCHAR(350),
+Active integer)
+
+  CREATE STAGE "INSURANCEDATA"."PUBLIC".CATEGORIES URL = 's3://insurancedat/Complain Administration_Categories.csv' 
+CREDENTIALS = (AWS_KEY_ID = 'AKIAQBTSVUOQTBW7HDXH' AWS_SECRET_KEY = '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');
+
+list @CATEGORIES;
+
+COPY INTO CATEGORIES FROM @CATEGORIES
+FILE_FORMAT =(TYPE = CSV FIELD_DELIMITER = ',' SKIP_HEADER=1  error_on_column_count_mismatch=false)
+PURGE = TRUE;
+select * from CATEGORIES
+truncate CATEGORIES 
+-------------------SOURCES-------------------------------------
+CREATE OR REPLACE TABLE SOURCES
+(
+ID INTEGER,
+  DESCRIPTION VARCHAR(350))
+  
+    CREATE STAGE "INSURANCEDATA"."PUBLIC".SOURCES URL = 's3://insurancedat/Complain Administration_Sources.csv' 
+CREDENTIALS = (AWS_KEY_ID = 'AKIAQBTSVUOQTBW7HDXH' AWS_SECRET_KEY = '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');
+
+list @SOURCES;
+
+COPY INTO SOURCES FROM @SOURCES
+FILE_FORMAT =(TYPE = CSV FIELD_DELIMITER = ',' SKIP_HEADER=1  error_on_column_count_mismatch=false)
+PURGE = TRUE;
+select * from SOURCES
+truncate SOURCES 
+-------------------TYPES-------------------------------------
+CREATE OR REPLACE TABLE TYPES
+(
+ID INTEGER,
+  DESCRIPTION VARCHAR(100))
+  
+      CREATE STAGE "INSURANCEDATA"."PUBLIC".TYPES URL = 's3://insurancedat/Complain Administration_Types.csv' 
+CREDENTIALS = (AWS_KEY_ID = 'AKIAQBTSVUOQTBW7HDXH' AWS_SECRET_KEY = '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');
+
+list @TYPES;
+
+COPY INTO TYPES FROM @TYPES
+FILE_FORMAT =(TYPE = CSV FIELD_DELIMITER = ',' SKIP_HEADER=1  error_on_column_count_mismatch=false)
+PURGE = TRUE;
+select * from TYPES
+
+-------------------PRIORITIES-------------------------------------
+CREATE OR REPLACE TABLE STATUS_HISTORY_DATA
+(
+ID INTEGER,
+  COMPLAINT_ID INTEGER,
+  COMPLAINTSTATUS_ID INTEGER,
+  STATUS_DATE string)
+  
+     CREATE STAGE "INSURANCEDATA"."PUBLIC".STATUS_HISTORY_DATA URL = 's3://insurancedat/Complain Administration_Status History Data.csv' 
+CREDENTIALS = (AWS_KEY_ID = 'AKIAQBTSVUOQTBW7HDXH' AWS_SECRET_KEY = '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');
+
+list @STATUS_HISTORY_DATA;
+
+COPY INTO STATUS_HISTORY_DATA FROM @STATUS_HISTORY_DATA
+FILE_FORMAT =(TYPE = CSV FIELD_DELIMITER = ',' SKIP_HEADER=1  error_on_column_count_mismatch=false)
+PURGE = TRUE;
+
+select * from STATUS_HISTORY_DATA
+
+---------------------------complains_data---------------------------
+
+create or replace table complains_data
+(
+   ID INTEGER,
+  COMPLAIN_DATE string,
+  CompletionDate string,
+  CUSTOMER_ID integer,
+  BROKER_ID integer,
+ PRODUCT_ID integer,
+  COMPLAIN_PRIORITY_ID integer,
+  COMPLAIN_TYPE_ID integer,
+  COMPLAIN_SOURCES_ID integer,
+  COMPLAIN_CATEGORY_ID integer,
+  COMPLAIN_STATUS_ID integer,
+  AdministratorID varchar(50),
+  ClientSatisfaction varchar(50),
+  ExpectedReimbursement varchar(50)
+)
+ CREATE STAGE "INSURANCEDATA"."PUBLIC".complains_data URL = 's3://insurancedat/Complain Administration_Complains Data.csv' 
+CREDENTIALS = (AWS_KEY_ID = 'AKIAQBTSVUOQTBW7HDXH' AWS_SECRET_KEY = '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');
+
+list @complains_data;
+
+COPY INTO complains_data FROM @complains_data
+FILE_FORMAT =(TYPE = CSV FIELD_DELIMITER = ',' SKIP_HEADER=1  error_on_column_count_mismatch=false)
+PURGE = TRUE;
+truncate complains_data 
+
+select C.*,B.*,P.*,CU.*,R.*,SR.*,PR.*,S.*,CA.*,SO.*,TY.* from complains_data C
+LEFT JOIN brokers B ON B.BROKER_ID=C.BROKER_ID
+LEFT JOIN product P ON P.PRODUCT_ID=C.PRODUCT_ID
+LEFT JOIN customers CU ON CU.customer_ID=C.customer_ID
+LEFT JOIN regions R ON R.ID=CU.REGIONID
+LEFT JOIN STATE_REGION SR ON SR.STATE_CODE=R.STATE_CODE
+LEFT JOIN PRIORITIES PR ON PR.ID=C.COMPLAIN_PRIORITY_ID
+LEFT JOIN STATUSES S ON S.ID=C.COMPLAIN_STATUS_ID
+LEFT JOIN CATEGORIES CA ON CA.ID=C.COMPLAIN_CATEGORY_ID
+LEFT JOIN SOURCES SO ON SO.ID=C.COMPLAIN_SOURCES_ID
+LEFT JOIN TYPES TY ON TY.ID=C.COMPLAIN_TYPE_ID
+ 
+ 
+ SELECT USER_ID,SONG_ID,SONG_PLAY,
+ ( SELECT USER_ID,SONG_ID,SONG_PLAY FROM SONG_HISTORY) AS SONG_HISTORY
+ FROM SONG_HISTORY
+
+
+
+
